@@ -5,7 +5,7 @@ using System.Numerics;
 
 namespace GameServer
 {
-	class Player
+	public class Player
 	{
 		public int id;
 		public string username;
@@ -28,7 +28,10 @@ namespace GameServer
 			rotation = Quaternion.Identity;
 			velocity = new Vector3(0);
 			rotvelocity = new Vector3(0);*/
-			ship = new Ship(id, new Vector3(), new Quaternion());
+
+			Ship.SendAllShipInfo(id);
+
+			ship = new Ship(id, new Vector3(0,2,0), new Quaternion());
 		}
 
 		public void Update(Packet NetUpdatePacket)

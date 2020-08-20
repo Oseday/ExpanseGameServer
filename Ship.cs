@@ -4,10 +4,6 @@ using System.Collections.Generic;
 
 namespace GameServer {
 
-	enum ShipType{
-		Default=1,
-	}
-
 	public class Ship {
 
 		//Physics
@@ -15,15 +11,26 @@ namespace GameServer {
 		private static int shipidcounter = 0;
 		public int ship_id;
 
-		public int type = (int)ShipType.Default;
+		public short type = Constants.ShipTypeDictFromValue[Constants.DefaultShip];
 
 		public Vector3 position;
 		public Quaternion rotation;
 		public Vector3 velocity = new Vector3();
 		public Vector3 rotvelocity = new Vector3();
 
+		public void GatherAllShipInfo(Packet p){
+			p.Write(ship_id);
+			p.Write(owner_id);
+			p.Write((int)type);
+			p.Write(position);
+			p.Write(rotation);
+			p.Write(velocity);
+			p.Write(rotvelocity);
+		}
+
 		public void UpdatePacket(Packet p){
 			p.Write(ship_id);
+			p.Write(owner_id);
 			p.Write(position);
 			p.Write(rotation);
 			p.Write(velocity);
@@ -37,19 +44,27 @@ namespace GameServer {
 			rotvelocity = rotvel;
 		}
 
-		public static void ClientShipSpawnSend(int user_id, int ship_id){
+		public void SpawnSend(){
+			using Packet p = new Packet((int)ServerPackets.SpawnShip);
+			this.GatherAllShipInfo(p);
+			ServerSend.SendTCPDataToAll(p);
+		}
+
+		/*public static void ClientShipSpawnSend(int user_id, int ship_id){
 
 			Ship ship = GetShipFromShipId(ship_id);
 			if (ship==null){return;}
 
 			using Packet p = new Packet((int)ServerPackets.SpawnShip);
 			p.Write(ship_id);
+			p.Write(ship.owner_id);
+			p.Write((int)ship.type);
 			p.Write(ship.position);
 			p.Write(ship.rotation);
 			p.Write(ship.velocity);
 			p.Write(ship.rotvelocity);
 			ServerSend.SendTCPData(user_id,p);
-		}
+		}*/
 
 
 		public int owner_id;
@@ -82,14 +97,8 @@ namespace GameServer {
 			rotation = rot;
 
 			AddShipDict(this);
-			
-			using Packet p = new Packet((int)ServerPackets.SpawnShip);
-			p.Write(ship_id);
-			p.Write(this.position);
-			p.Write(this.rotation);
-			p.Write(this.velocity);
-			p.Write(this.rotvelocity);
-			ServerSend.SendTCPDataToAll(p);
+
+			SpawnSend();
 		}
 
 
@@ -106,10 +115,10 @@ namespace GameServer {
 			return OwnerShipRef[owner_id];
 		}
 		public static Ship GetShipFromPlr(int user_id){
-			return OwnerShipRef[user_id];
+			return PlrInShipRef[user_id];
 		}
 		public static Ship GetShipFromShipId(int ship_id){
-			return OwnerShipRef[ship_id];
+			return ShipIdtoShipRef[ship_id];
 		}
 
 		private static void AddShipDict(Ship ship){
@@ -126,6 +135,27 @@ namespace GameServer {
 		}
 		private static void RemovePlrShipDict(int uid, Ship ship){
 			PlrInShipRef[uid] = null;
+		}
+
+		public static void SendAllShipInfo(int uid){
+			using Packet p = new Packet();
+
+			//p.Write(ShipIdtoShipRef.Values.Count);
+
+			int shipc = 0;
+			
+			foreach (var ship in ShipIdtoShipRef.Values)
+			{
+				if (ship!=null){ 
+					shipc++;
+					ship.GatherAllShipInfo(p);
+				}
+			}
+
+			p.InsertInt(shipc);
+
+			p.InsertInt((int)ServerPackets.AllShipInfo);
+			ServerSend.SendTCPData(uid, p);
 		}
 
 	}

@@ -6,7 +6,7 @@ using System.Net.Sockets;
 
 namespace GameServer
 {
-    class Server
+    public class Server
     {
         public static int MaxPlayers { get; private set; }
         public static int Port { get; private set; }
@@ -121,7 +121,7 @@ namespace GameServer
                 { (int)ClientPackets.playerMovement, ServerHandle.PlayerMovement },
             };*/
 
-            packetHandlers = ServerHandle.InitPacketDict();
+            packetHandlers = Constants.InitPacketDict();
 
             Console.WriteLine("Initialized packets.");
         }

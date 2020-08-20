@@ -31,10 +31,12 @@ namespace GameServer
 			int ShipCount = 0;
 
 
-			foreach (var ship in Ship.ShipIdtoShipRef.Values)
+			foreach (Ship ship in Ship.ShipIdtoShipRef.Values)
 			{
-				ShipCount++;
-				ship.UpdatePacket(PhysicsTick);
+				if (ship!=null){ 
+					ShipCount++;
+					ship.UpdatePacket(PhysicsTick);
+				}
 			}
 
 			PhysicsTick.InsertInt(ShipCount);

@@ -7,11 +7,11 @@ namespace GameServer
     class Program
     {
 
-        static void Main(string[] args){
+        /*static void Main(string[] args){
             //Console.WriteLine(Hash.Calc(new Vector3(0,1,0)));
-        }
+        }*/
 
-        /*private static bool isRunning = false;
+        private static bool isRunning = false;
 
         static void Main(string[] args)
         {
@@ -63,6 +63,6 @@ namespace GameServer
                     }
             }
 
-        }*/
+        }
     }
 }

@@ -5,35 +5,10 @@ using System.Text;
 
 namespace GameServer
 {
-	/// <summary>Sent from server to client.</summary>
-	public enum ServerPackets
-	{
-		welcome = 1,
-		spawnPlayer = 2,
-		PhysicsTick = 3,
-		despawnPlayer = 4,
-		SpawnShip = 5,
-		DespawnShip = 6,
-	}
-
-	/// <summary>Sent from client to server.</summary>
-	public enum ClientPackets
-	{
-		welcomeReceived = 1,
-		ShipPhysicsUpdate = 2,
-	}
-
 	class ServerHandle
 	{
 
-		public static Dictionary<int, Server.PacketHandler> InitPacketDict()
-		{
-			return new Dictionary<int, Server.PacketHandler>
-			{
-				{ (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
-				{ (int)ClientPackets.ShipPhysicsUpdate, ServerHandle.ShipPhysicsUpdate },
-			};
-		}
+		
 
 		public static void WelcomeReceived(int _fromClient, Packet _packet)
 		{
